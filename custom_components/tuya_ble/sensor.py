@@ -2352,6 +2352,19 @@ mapping: dict[str, TuyaBLECategorySensorMapping] = {
                         state_class=SensorStateClass.MEASUREMENT,
                     ),
                 ),
+                TuyaBLESensorMapping(
+                    dp_id=14,
+                    description=SensorEntityDescription(
+                        key="battery_state",
+                        device_class=SensorDeviceClass.ENUM,
+                        entity_category=EntityCategory.DIAGNOSTIC,
+                        options=[
+                            "idle",
+                            "charging",
+                            "low_battery",
+                        ],
+                    ),
+                ),
                 TuyaBLETemperatureMapping(
                     dp_id=28,
                     coefficient=10.0,

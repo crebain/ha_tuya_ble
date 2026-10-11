@@ -209,7 +209,20 @@
             },
             "rain_delay_time": {
                 "name": "Rain delay time"
-            }
+            },
+            "probe_1_target_temperature": { "name": "Probe 1 target temperature" },
+            "probe_2_target_temperature": { "name": "Probe 2 target temperature" },
+            "probe_3_target_temperature": { "name": "Probe 3 target temperature" },
+            "probe_4_target_temperature": { "name": "Probe 4 target temperature" },
+            "probe_5_target_temperature": { "name": "Probe 5 target temperature" },
+            "probe_6_target_temperature": { "name": "Probe 6 target temperature" },
+
+            "probe_1_countdown": { "name": "Probe 1 countdown" },
+            "probe_2_countdown": { "name": "Probe 2 countdown" },
+            "probe_3_countdown": { "name": "Probe 3 countdown" },
+            "probe_4_countdown": { "name": "Probe 4 countdown" },
+            "probe_5_countdown": { "name": "Probe 5 countdown" },
+            "probe_6_countdown": { "name": "Probe 6 countdown" }
         },
         "select": {
             "beep_volume": {
@@ -355,7 +368,10 @@
                     "high": "High",
                     "low": "Low",
                     "middle": "Medium",
-                    "normal": "Normal"
+                    "normal": "Normal",
+                    "idle": "Idle",
+                    "charging": "Charging",
+                    "low_battery": "Low battery"
                 }
             },
             "carbon_dioxide": {
@@ -566,6 +582,24 @@
             "schedule": {
                 "name": "Schedule"
             },
+            "probe_1_temperature": {
+                "name": "Probe 1"
+            },
+            "probe_2_temperature": {
+                "name": "Probe 2"
+            },
+            "probe_3_temperature": {
+                "name": "Probe 3"
+            },
+            "probe_4_temperature": {
+                "name": "Probe 4"
+            },
+            "probe_5_temperature": {
+                "name": "Probe 5"
+            },
+            "probe_6_temperature": {
+                "name": "Probe 6"
+            },
             "zones": {
                 "name": "Zones"
             }
@@ -654,6 +688,9 @@
             },
             "switch_go": {
                 "name": "Mowing switch"
+            },
+            "alarm_switch": {
+                "name": "Alarm"
             },
             "rain_delay": {
                 "name": "Rain delay"
