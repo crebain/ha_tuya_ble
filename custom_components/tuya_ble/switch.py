@@ -957,6 +957,20 @@ mapping: dict[str, TuyaBLECategorySwitchMapping] = {
             ],
         },
     ),
+    "swtz": TuyaBLECategorySwitchMapping(
+        products={
+            "o3nnpkat": [
+                TuyaBLESwitchMapping(
+                    dp_id=44,
+                    description=SwitchEntityDescription(
+                        key="alarm_switch",
+                        icon="mdi:alarm",
+                        entity_category=EntityCategory.CONFIG,
+                    ),
+                ),
+            ],
+        },
+    ),
     "gcj": TuyaBLECategorySwitchMapping(
         products={
             "9hdajpiw": [

@@ -819,6 +819,13 @@ mapping: dict[str, TuyaBLECategorySelectMapping] = {
             ],
         },
     ),
+    "swtz": TuyaBLECategorySelectMapping(
+        products={
+            "o3nnpkat": [
+                TuyaBLETemperatureUnitMapping(dp_id=17),
+            ],
+        },
+    ),
     "gcj": TuyaBLECategorySelectMapping(
         products={
             "9hdajpiw": [

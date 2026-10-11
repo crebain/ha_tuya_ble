@@ -368,7 +368,10 @@
                     "high": "High",
                     "low": "Low",
                     "middle": "Medium",
-                    "normal": "Normal"
+                    "normal": "Normal",
+                    "idle": "Idle",
+                    "charging": "Charging",
+                    "low_battery": "Low battery"
                 }
             },
             "carbon_dioxide": {
@@ -671,6 +674,9 @@
             },
             "switch_go": {
                 "name": "Mowing switch"
+            },
+            "alarm_switch": {
+                "name": "Alarm"
             },
             "rain_delay": {
                 "name": "Rain delay"
