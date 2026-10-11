@@ -566,6 +566,24 @@
             "schedule": {
                 "name": "Schedule"
             },
+            "probe_1_temperature": {
+                "name": "Probe 1"
+            },
+            "probe_2_temperature": {
+                "name": "Probe 2"
+            },
+            "probe_3_temperature": {
+                "name": "Probe 3"
+            },
+            "probe_4_temperature": {
+                "name": "Probe 4"
+            },
+            "probe_5_temperature": {
+                "name": "Probe 5"
+            },
+            "probe_6_temperature": {
+                "name": "Probe 6"
+            },
             "zones": {
                 "name": "Zones"
             }
