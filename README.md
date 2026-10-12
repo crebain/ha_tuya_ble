@@ -129,6 +129,13 @@ See a device marked Experimental you have? We could use real world testing feedb
       <td>—</td>
     </tr>
     <tr>
+      <td><strong>Meat thermometers</strong></td>
+      <td><code>swtz</code></td>
+      <td>BTH08 Smart Meat Thermometer</td>
+      <td><code>o3nnpkat</code></td>
+      <td>Six probes with target temperatures and countdown alarms; battery status, temperature unit and alarm enable controls.</td>
+    </tr>
+    <tr>
       <td><strong>CO2 sensors</strong></td>
       <td><code>co2bj</code></td>
       <td>CO2 Detector</td>
