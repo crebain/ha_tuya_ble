@@ -209,6 +209,42 @@
             },
             "rain_delay_time": {
                 "name": "雨天延迟时长"
+            },
+            "probe_1_target_temperature": {
+                "name": "探针 1 目标温度"
+            },
+            "probe_1_countdown": {
+                "name": "探针 1 倒计时"
+            },
+            "probe_2_target_temperature": {
+                "name": "探针 2 目标温度"
+            },
+            "probe_2_countdown": {
+                "name": "探针 2 倒计时"
+            },
+            "probe_3_target_temperature": {
+                "name": "探针 3 目标温度"
+            },
+            "probe_3_countdown": {
+                "name": "探针 3 倒计时"
+            },
+            "probe_4_target_temperature": {
+                "name": "探针 4 目标温度"
+            },
+            "probe_4_countdown": {
+                "name": "探针 4 倒计时"
+            },
+            "probe_5_target_temperature": {
+                "name": "探针 5 目标温度"
+            },
+            "probe_5_countdown": {
+                "name": "探针 5 倒计时"
+            },
+            "probe_6_target_temperature": {
+                "name": "探针 6 目标温度"
+            },
+            "probe_6_countdown": {
+                "name": "探针 6 倒计时"
             }
         },
         "select": {
@@ -355,7 +391,10 @@
                     "high": "高",
                     "low": "低",
                     "middle": "中",
-                    "normal": "正常"
+                    "normal": "正常",
+                    "idle": "空闲",
+                    "charging": "正在充电",
+                    "low_battery": "电量低"
                 }
             },
             "carbon_dioxide": {
@@ -568,6 +607,24 @@
             },
             "zones": {
                 "name": "分区"
+            },
+            "probe_1_temperature": {
+                "name": "探针 1 温度"
+            },
+            "probe_2_temperature": {
+                "name": "探针 2 温度"
+            },
+            "probe_3_temperature": {
+                "name": "探针 3 温度"
+            },
+            "probe_4_temperature": {
+                "name": "探针 4 温度"
+            },
+            "probe_5_temperature": {
+                "name": "探针 5 温度"
+            },
+            "probe_6_temperature": {
+                "name": "探针 6 温度"
             }
         },
         "switch": {
@@ -657,6 +714,9 @@
             },
             "rain_delay": {
                 "name": "雨天延迟"
+            },
+            "alarm_switch": {
+                "name": "警报"
             }
         },
         "text": {

@@ -2306,6 +2306,7 @@ mapping: dict[str, TuyaBLECategorySensorMapping] = {
                     dp_id=1,
                     description=SensorEntityDescription(
                         key="battery_percentage",
+                        translation_key="battery",
                         device_class=SensorDeviceClass.BATTERY,
                         native_unit_of_measurement=PERCENTAGE,
                         entity_category=EntityCategory.DIAGNOSTIC,

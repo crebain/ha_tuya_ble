@@ -209,6 +209,42 @@
             },
             "rain_delay_time": {
                 "name": "Durée du délai de pluie"
+            },
+            "probe_1_target_temperature": {
+                "name": "Température cible de la sonde 1"
+            },
+            "probe_1_countdown": {
+                "name": "Compte à rebours de la sonde 1"
+            },
+            "probe_2_target_temperature": {
+                "name": "Température cible de la sonde 2"
+            },
+            "probe_2_countdown": {
+                "name": "Compte à rebours de la sonde 2"
+            },
+            "probe_3_target_temperature": {
+                "name": "Température cible de la sonde 3"
+            },
+            "probe_3_countdown": {
+                "name": "Compte à rebours de la sonde 3"
+            },
+            "probe_4_target_temperature": {
+                "name": "Température cible de la sonde 4"
+            },
+            "probe_4_countdown": {
+                "name": "Compte à rebours de la sonde 4"
+            },
+            "probe_5_target_temperature": {
+                "name": "Température cible de la sonde 5"
+            },
+            "probe_5_countdown": {
+                "name": "Compte à rebours de la sonde 5"
+            },
+            "probe_6_target_temperature": {
+                "name": "Température cible de la sonde 6"
+            },
+            "probe_6_countdown": {
+                "name": "Compte à rebours de la sonde 6"
             }
         },
         "select": {
@@ -355,7 +391,10 @@
                     "high": "Haut",
                     "low": "Bas",
                     "middle": "Moyen",
-                    "normal": "Normal"
+                    "normal": "Normal",
+                    "idle": "Au repos",
+                    "charging": "En charge",
+                    "low_battery": "Batterie faible"
                 }
             },
             "carbon_dioxide": {
@@ -568,6 +607,24 @@
             },
             "zones": {
                 "name": "Zones"
+            },
+            "probe_1_temperature": {
+                "name": "Température de la sonde 1"
+            },
+            "probe_2_temperature": {
+                "name": "Température de la sonde 2"
+            },
+            "probe_3_temperature": {
+                "name": "Température de la sonde 3"
+            },
+            "probe_4_temperature": {
+                "name": "Température de la sonde 4"
+            },
+            "probe_5_temperature": {
+                "name": "Température de la sonde 5"
+            },
+            "probe_6_temperature": {
+                "name": "Température de la sonde 6"
             }
         },
         "switch": {
@@ -657,6 +714,9 @@
             },
             "rain_delay": {
                 "name": "Délai de pluie"
+            },
+            "alarm_switch": {
+                "name": "Alarme"
             }
         },
         "text": {

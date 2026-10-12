@@ -209,6 +209,42 @@
             },
             "rain_delay_time": {
                 "name": "Tiempo de retardo por lluvia"
+            },
+            "probe_1_target_temperature": {
+                "name": "Temperatura objetivo de la sonda 1"
+            },
+            "probe_1_countdown": {
+                "name": "Cuenta atrás de la sonda 1"
+            },
+            "probe_2_target_temperature": {
+                "name": "Temperatura objetivo de la sonda 2"
+            },
+            "probe_2_countdown": {
+                "name": "Cuenta atrás de la sonda 2"
+            },
+            "probe_3_target_temperature": {
+                "name": "Temperatura objetivo de la sonda 3"
+            },
+            "probe_3_countdown": {
+                "name": "Cuenta atrás de la sonda 3"
+            },
+            "probe_4_target_temperature": {
+                "name": "Temperatura objetivo de la sonda 4"
+            },
+            "probe_4_countdown": {
+                "name": "Cuenta atrás de la sonda 4"
+            },
+            "probe_5_target_temperature": {
+                "name": "Temperatura objetivo de la sonda 5"
+            },
+            "probe_5_countdown": {
+                "name": "Cuenta atrás de la sonda 5"
+            },
+            "probe_6_target_temperature": {
+                "name": "Temperatura objetivo de la sonda 6"
+            },
+            "probe_6_countdown": {
+                "name": "Cuenta atrás de la sonda 6"
             }
         },
         "select": {
@@ -355,7 +391,10 @@
                     "high": "Alto",
                     "low": "Bajo",
                     "middle": "Medio",
-                    "normal": "Normal"
+                    "normal": "Normal",
+                    "idle": "Inactivo",
+                    "charging": "Cargando",
+                    "low_battery": "Batería baja"
                 }
             },
             "carbon_dioxide": {
@@ -568,6 +607,24 @@
             },
             "zones": {
                 "name": "Zonas"
+            },
+            "probe_1_temperature": {
+                "name": "Temperatura de la sonda 1"
+            },
+            "probe_2_temperature": {
+                "name": "Temperatura de la sonda 2"
+            },
+            "probe_3_temperature": {
+                "name": "Temperatura de la sonda 3"
+            },
+            "probe_4_temperature": {
+                "name": "Temperatura de la sonda 4"
+            },
+            "probe_5_temperature": {
+                "name": "Temperatura de la sonda 5"
+            },
+            "probe_6_temperature": {
+                "name": "Temperatura de la sonda 6"
             }
         },
         "switch": {
@@ -657,6 +714,9 @@
             },
             "rain_delay": {
                 "name": "Retardo por lluvia"
+            },
+            "alarm_switch": {
+                "name": "Alarma"
             }
         },
         "text": {

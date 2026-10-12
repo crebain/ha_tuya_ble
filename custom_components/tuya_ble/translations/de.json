@@ -209,6 +209,42 @@
             },
             "rain_delay_time": {
                 "name": "Regenverzögerungsdauer"
+            },
+            "probe_1_target_temperature": {
+                "name": "Zieltemperatur von Fühler 1"
+            },
+            "probe_1_countdown": {
+                "name": "Countdown für Fühler 1"
+            },
+            "probe_2_target_temperature": {
+                "name": "Zieltemperatur von Fühler 2"
+            },
+            "probe_2_countdown": {
+                "name": "Countdown für Fühler 2"
+            },
+            "probe_3_target_temperature": {
+                "name": "Zieltemperatur von Fühler 3"
+            },
+            "probe_3_countdown": {
+                "name": "Countdown für Fühler 3"
+            },
+            "probe_4_target_temperature": {
+                "name": "Zieltemperatur von Fühler 4"
+            },
+            "probe_4_countdown": {
+                "name": "Countdown für Fühler 4"
+            },
+            "probe_5_target_temperature": {
+                "name": "Zieltemperatur von Fühler 5"
+            },
+            "probe_5_countdown": {
+                "name": "Countdown für Fühler 5"
+            },
+            "probe_6_target_temperature": {
+                "name": "Zieltemperatur von Fühler 6"
+            },
+            "probe_6_countdown": {
+                "name": "Countdown für Fühler 6"
             }
         },
         "select": {
@@ -355,7 +391,10 @@
                     "high": "Hoch",
                     "low": "Niedrig",
                     "middle": "Mittel",
-                    "normal": "Normal"
+                    "normal": "Normal",
+                    "idle": "Inaktiv",
+                    "charging": "Lädt",
+                    "low_battery": "Batterie schwach"
                 }
             },
             "carbon_dioxide": {
@@ -568,6 +607,24 @@
             },
             "zones": {
                 "name": "Zonen"
+            },
+            "probe_1_temperature": {
+                "name": "Temperatur von Fühler 1"
+            },
+            "probe_2_temperature": {
+                "name": "Temperatur von Fühler 2"
+            },
+            "probe_3_temperature": {
+                "name": "Temperatur von Fühler 3"
+            },
+            "probe_4_temperature": {
+                "name": "Temperatur von Fühler 4"
+            },
+            "probe_5_temperature": {
+                "name": "Temperatur von Fühler 5"
+            },
+            "probe_6_temperature": {
+                "name": "Temperatur von Fühler 6"
             }
         },
         "switch": {
@@ -657,6 +714,9 @@
             },
             "rain_delay": {
                 "name": "Regenverzögerung"
+            },
+            "alarm_switch": {
+                "name": "Alarm"
             }
         },
         "text": {
