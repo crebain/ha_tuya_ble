@@ -1061,7 +1061,8 @@ mapping: dict[str, TuyaBLECategoryNumberMapping] = {
                     )
                     for probe, dp_id in enumerate((10, 11, 12, 13, 36, 37), start=1)
                 ],
-                # Probe countdown timers
+                # BLE countdown reports decrement in seconds, despite the
+                # Tuya schema declaring minutes. Keep HA values in minutes.
                 *[
                     TuyaBLENumberMapping(
                         dp_id=dp_id,
@@ -1074,6 +1075,7 @@ mapping: dict[str, TuyaBLECategoryNumberMapping] = {
                             native_step=1,
                             native_unit_of_measurement=UnitOfTime.MINUTES,
                         ),
+                        coefficient=60.0,
                     )
                     for probe, dp_id in enumerate((24, 25, 26, 27, 40, 41), start=1)
                 ],

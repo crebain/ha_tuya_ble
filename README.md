@@ -133,7 +133,7 @@ See a device marked Experimental you have? We could use real world testing feedb
       <td><code>swtz</code></td>
       <td>BTH08 Smart Meat Thermometer</td>
       <td><code>o3nnpkat</code></td>
-      <td>Six probes with target temperatures and countdown alarms; battery status, temperature unit and alarm enable controls.</td>
+      <td>Six probes with target temperatures and countdown controls; battery status, temperature unit and alarm enable controls.</td>
     </tr>
     <tr>
       <td><strong>CO2 sensors</strong></td>
@@ -459,6 +459,22 @@ See a device marked Experimental you have? We could use real world testing feedb
     </tr>
   </tbody>
 </table>
+
+### BTH08 Meat Thermometer
+
+Target temperatures use whole-degree steps (1 °C), matching the device and
+official app. Temperature datapoints retain their Tuya scale of 1.
+
+The six countdown controls display minutes, with a range of 0–1440 and a
+one-minute setting step. BLE reports for DPs 24, 25, 26, 27, 40 and 41 are
+interpreted as seconds: live values such as `46469` → `46468` decrement once
+per second, despite the Tuya schema declaring minutes. For example, `46469`
+represents 12 hours, 54 minutes and 29 seconds (about 774.48 minutes).
+Home Assistant divides reports by 60 and multiplies settings by 60, so a
+five-minute setting sends `300`. Reports retain fractional minutes to reflect
+each second of the countdown. Countdown write units and expiry behavior still
+require physical-device testing; a countdown control has not been found in the
+official app used during runtime testing.
 
 ### Fingerbots Programming Note
 All features available in Home Assistant, programming (series of actions) is implemented for Fingerbot Plus.
