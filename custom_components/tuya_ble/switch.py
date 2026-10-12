@@ -962,6 +962,8 @@ mapping: dict[str, TuyaBLECategorySwitchMapping] = {
             "o3nnpkat": [
                 TuyaBLESwitchMapping(
                     dp_id=44,
+                    # Boolean writes are acknowledged, but the physical
+                    # alarm behavior is unverified; do not assume a beep trigger.
                     description=SwitchEntityDescription(
                         key="alarm_switch",
                         icon="mdi:alarm",

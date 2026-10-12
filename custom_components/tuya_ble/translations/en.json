@@ -713,7 +713,7 @@
                 "name": "Mowing switch"
             },
             "alarm_switch": {
-                "name": "Alarm"
+                "name": "Alarm switch (unverified)"
             },
             "rain_delay": {
                 "name": "Rain delay"

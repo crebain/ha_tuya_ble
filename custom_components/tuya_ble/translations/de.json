@@ -716,7 +716,7 @@
                 "name": "Regenverzögerung"
             },
             "alarm_switch": {
-                "name": "Alarm"
+                "name": "Alarmschalter (nicht bestätigt)"
             }
         },
         "text": {

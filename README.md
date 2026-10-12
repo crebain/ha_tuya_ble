@@ -133,7 +133,7 @@ See a device marked Experimental you have? We could use real world testing feedb
       <td><code>swtz</code></td>
       <td>BTH08 Smart Meat Thermometer</td>
       <td><code>o3nnpkat</code></td>
-      <td>Six probes with target temperatures and countdown controls; battery status, temperature unit and alarm enable controls.</td>
+      <td>Six probes with target temperatures and countdown controls; battery status, temperature unit and an unverified alarm switch (DP44).</td>
     </tr>
     <tr>
       <td><strong>CO2 sensors</strong></td>
@@ -475,6 +475,15 @@ five-minute setting sends `300`. Reports retain fractional minutes to reflect
 each second of the countdown. Countdown write units and expiry behavior still
 require physical-device testing; a countdown control has not been found in the
 official app used during runtime testing.
+
+DP44 is exposed as **Alarm switch (unverified)**, retaining the existing
+`alarm_switch` entity key. Boolean writes from Home Assistant were acknowledged
+with Tuya result `0`, but toggling the switch did not cause the BTH08 to beep.
+An acknowledged write establishes command acceptance, not a physical alarm
+response. DP44's exact meaning, including any relationship to mute or
+temperature/countdown alarms, remains unverified. It must not be used as an
+immediate beeper trigger. Physical testing is needed to correlate its state
+with the device/app controls and with an actual alarm event.
 
 ### Fingerbots Programming Note
 All features available in Home Assistant, programming (series of actions) is implemented for Fingerbot Plus.

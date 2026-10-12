@@ -716,7 +716,7 @@
                 "name": "Atraso por chuva"
             },
             "alarm_switch": {
-                "name": "Alarme"
+                "name": "Interruptor de alarme (não verificado)"
             }
         },
         "text": {

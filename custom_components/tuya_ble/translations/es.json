@@ -716,7 +716,7 @@
                 "name": "Retardo por lluvia"
             },
             "alarm_switch": {
-                "name": "Alarma"
+                "name": "Interruptor de alarma (sin verificar)"
             }
         },
         "text": {

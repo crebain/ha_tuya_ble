@@ -716,7 +716,7 @@
                 "name": "Délai de pluie"
             },
             "alarm_switch": {
-                "name": "Alarme"
+                "name": "Interrupteur d’alarme (non vérifié)"
             }
         },
         "text": {
