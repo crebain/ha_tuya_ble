@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import Any
 
 import logging
@@ -270,6 +271,7 @@ class TuyaBLECoordinator(DataUpdateCoordinator[None]):
             hass,
             _LOGGER,
             name=DOMAIN,
+            update_interval=timedelta(seconds=30) if device.keep_connection else None,
         )
         self._device = device
         self._disconnected: bool = True
@@ -287,11 +289,32 @@ class TuyaBLECoordinator(DataUpdateCoordinator[None]):
             return self._device.reachable
         return not self._disconnected
 
+    async def _async_update_data(self) -> None:
+        """Check the held BLE link even if no disconnect callback arrived."""
+        if not self._device.keep_connection:
+            return
+
+        # Inspect the same link/pairing state used by the diagnostics. This
+        # performs no BLE I/O and does not depend on fresh temperature reports.
+        client = self._device._client
+        if client and client.is_connected and self._device._is_paired:
+            self._async_handle_connect()
+        elif not self._disconnected:
+            self._async_handle_disconnect()
+
+    async def async_shutdown(self) -> None:
+        """Cancel both the link check and any pending availability timeout."""
+        if self._unsub_disconnect is not None:
+            self._unsub_disconnect()
+            self._unsub_disconnect = None
+        await super().async_shutdown()
+
     @callback
     def _async_handle_connect(self) -> None:
         self.last_updates = None
         if self._unsub_disconnect is not None:
             self._unsub_disconnect()
+            self._unsub_disconnect = None
         if self._disconnected:
             self._disconnected = False
             self.async_update_listeners()
@@ -326,7 +349,7 @@ class TuyaBLECoordinator(DataUpdateCoordinator[None]):
     @callback
     def _async_handle_disconnect(self) -> None:
         """Trigger the callbacks for disconnected."""
-        if self._unsub_disconnect is None:
+        if not self._disconnected and self._unsub_disconnect is None:
             delay: float = SET_DISCONNECTED_DELAY
             self._unsub_disconnect = async_call_later(
                 self.hass, delay, self._set_disconnected

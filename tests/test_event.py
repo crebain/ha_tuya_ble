@@ -1,6 +1,7 @@
 """Test for tuya_ble event."""
 
 from unittest.mock import Mock, AsyncMock
+import pytest
 from homeassistant.core import HomeAssistant
 from homeassistant.components.event import EventEntityDescription, EventDeviceClass
 from custom_components.tuya_ble.event import TuyaBLEEvent, TuyaBLEEventMapping
@@ -26,7 +27,7 @@ CONFIG = {
 }
 
 
-async def test_event(hass: HomeAssistant) -> None:
+async def test_event(hass: HomeAssistant, request: pytest.FixtureRequest) -> None:
     from pytest_homeassistant_custom_component.common import MockConfigEntry
     from custom_components.tuya_ble.const import DOMAIN
     from custom_components.tuya_ble.cloud import HASSTuyaBLEDeviceManager
@@ -83,7 +84,8 @@ async def test_event(hass: HomeAssistant) -> None:
     entity = TuyaBLEEvent(hass, coordinator, device, product_info, mapping)
     entity.async_write_ha_state = Mock()
     entity._trigger_event = Mock()
-    coordinator.async_add_listener(entity._handle_coordinator_update)
+    unsubscribe = coordinator.async_add_listener(entity._handle_coordinator_update)
+    request.addfinalizer(unsubscribe)
 
     # Initial state
     assert entity.available is False

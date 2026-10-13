@@ -25,6 +25,14 @@ Place the `custom_components` folder in your configuration directory (or add its
 
 After adding to Home Assistant integration should discover all supported Bluetooth devices, or you can add discoverable devices manually.
 
+With **Keep BLE connection open** enabled, the integration checks the held link
+every 30 seconds. After detecting a lost link, it marks entities unavailable
+following the existing ten-minute disconnect grace period. The last readings
+remain in history. The idle disconnect delay applies only when **Keep BLE
+connection open** is disabled. These availability checks inspect the connection
+state reported by Home Assistant, including when using a Bluetooth proxy; they
+do not expire a connected device merely because its readings are unchanged.
+
 The integration works locally, but connection to Tuya BLE device requires device ID and encryption key from Tuya IOT cloud. It could be obtained using the same credentials as in the previous official Tuya integration. To obtain the credentials, please refer to official Tuya integration [documentation](https://web.archive.org/web/20231228044831/https://www.home-assistant.io/integrations/tuya/) [[1]](https://github.com/home-assistant/home-assistant.io/blob/a4e6d4819f1db584cc66ba2082508d3978f83f7e/source/_integrations/tuya.markdown)
 
 Newer protocol-v2 devices require a matching 16-character `localKey` and
