@@ -367,6 +367,13 @@ class TuyaBLECoordinator(DataUpdateCoordinator[None]):
     @callback
     def _async_handle_disconnect(self) -> None:
         """Trigger the callbacks for disconnected."""
+        if self._device.keep_connection and self._device.product_id == "o3nnpkat":
+            if self._unsub_disconnect is not None:
+                self._unsub_disconnect()
+                self._unsub_disconnect = None
+            if not self._disconnected:
+                self._set_disconnected(None)
+            return
         if not self._disconnected and self._unsub_disconnect is None:
             delay: float = SET_DISCONNECTED_DELAY
             self._unsub_disconnect = async_call_later(

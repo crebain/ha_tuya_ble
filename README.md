@@ -28,7 +28,10 @@ After adding to Home Assistant integration should discover all supported Bluetoo
 With **Keep BLE connection open** enabled, the integration checks the held link
 every 30 seconds. After detecting a lost link, it marks entities unavailable
 following the existing ten-minute disconnect grace period. The last readings
-remain in history. The idle disconnect delay applies only when **Keep BLE
+remain in history. BTH08 thermometers become unavailable immediately when a
+disconnect is detected, without that grace period; a missed disconnect callback
+is detected by the next 30-second link check. The idle disconnect delay applies
+only when **Keep BLE
 connection open** is disabled. These availability checks inspect the connection
 state reported by Home Assistant, including when using a Bluetooth proxy; they
 do not expire a connected device merely because its readings are unchanged.

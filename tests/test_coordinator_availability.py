@@ -160,3 +160,38 @@ async def test_shutdown_cancels_pending_disconnect_timeout(
     await _advance(hass, freezer, SET_DISCONNECTED_DELAY + 31)
     listener.assert_not_called()
     unsubscribe()
+
+
+@pytest.mark.parametrize("notification", ("callback", "poll"))
+async def test_bth08_disconnect_has_no_grace_period(hass, freezer, notification):
+    """A lost BTH08 link publishes unavailability without the ten-minute grace."""
+    device = _make_device()
+    device._device_info = Mock(product_id="o3nnpkat")
+    device.datapoints._update_from_device(3, 0, 0, TuyaBLEDataPointType.DT_VALUE, 206)
+    coordinator = TuyaBLECoordinator(hass, device)
+    listener = Mock()
+    unsubscribe = coordinator.async_add_listener(listener)
+    try:
+        coordinator._async_handle_connect()
+        listener.reset_mock()
+        device._client = None
+        device._is_paired = False
+        if notification == "callback":
+            coordinator._async_handle_disconnect()
+        else:
+            await _advance(hass, freezer, 31)
+        assert not coordinator.connected
+        assert coordinator._unsub_disconnect is None
+        assert device.datapoints[3].value == 206
+        listener.assert_called()
+
+        # Repeated failed checks cannot restore cached data's availability.
+        await _advance(hass, freezer, 31)
+        assert not coordinator.connected
+        device._client = Mock(is_connected=True)
+        device._is_paired = True
+        await _advance(hass, freezer, 31)
+        assert coordinator.connected
+    finally:
+        unsubscribe()
+        await coordinator.async_shutdown()
