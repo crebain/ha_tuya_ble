@@ -45,6 +45,24 @@ from .base import IntegerTypeData, EnumTypeData
 _LOGGER = logging.getLogger(__name__)
 
 
+def bth08_probe_connected(device: TuyaBLEDevice, temperature_dp_id: int) -> bool:
+    """Read probe presence, using current-session temperatures before DP16 arrives."""
+    datapoint = device.datapoints[16]
+    if datapoint is None:
+        temperature = device.datapoints[temperature_dp_id]
+        return (
+            temperature is not None
+            and temperature.type == TuyaBLEDataPointType.DT_VALUE
+        )
+    if datapoint.type != TuyaBLEDataPointType.DT_RAW:
+        return False
+    value = datapoint.value
+    if not isinstance(value, (bytes, bytearray)) or len(value) != 1:
+        return False
+    probe_bit = {2: 0, 3: 1, 4: 2, 5: 3, 28: 4, 29: 5}[temperature_dp_id]
+    return bool(value[0] & (1 << probe_bit))
+
+
 @dataclass
 class TuyaBLEFingerbotInfo:
     """Model a fingerbot"""

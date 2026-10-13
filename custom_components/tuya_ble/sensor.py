@@ -41,7 +41,12 @@ from .const import (
     PARKSIDE_MOWER_STATUSES,
     PARKSIDE_MOWER_WARNINGS,
 )
-from .devices import TuyaBLEData, TuyaBLEEntity, TuyaBLEProductInfo
+from .devices import (
+    TuyaBLEData,
+    TuyaBLEEntity,
+    TuyaBLEProductInfo,
+    bth08_probe_connected,
+)
 from .tuya_ble import TuyaBLEDataPointType, TuyaBLEDevice
 
 _LOGGER = logging.getLogger(__name__)
@@ -90,22 +95,7 @@ class TuyaBLETemperatureMapping(TuyaBLESensorMapping):
 
 def is_bth08_probe_connected(self: TuyaBLESensor, product: TuyaBLEProductInfo) -> bool:
     """Read probe presence from DP16; temperature DPs retain unplugged readings."""
-    datapoint = self._device.datapoints[16]
-    if datapoint is None:
-        # BTH08 may report temperatures before sending its presence bitmap.
-        # Datapoints are session-local; restored HA states are not evidence.
-        temperature = self._device.datapoints[self._mapping.dp_id]
-        return (
-            temperature is not None
-            and temperature.type == TuyaBLEDataPointType.DT_VALUE
-        )
-    if datapoint.type != TuyaBLEDataPointType.DT_RAW:
-        return False
-    value = datapoint.value
-    if not isinstance(value, (bytes, bytearray)) or len(value) != 1:
-        return False
-    probe_bit = {2: 0, 3: 1, 4: 2, 5: 3, 28: 4, 29: 5}[self._mapping.dp_id]
-    return bool(value[0] & (1 << probe_bit))
+    return bth08_probe_connected(self._device, self._mapping.dp_id)
 
 
 def is_co2_alarm_enabled(self: TuyaBLESensor, product: TuyaBLEProductInfo) -> bool:

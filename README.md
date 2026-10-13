@@ -478,7 +478,8 @@ Probe temperature availability follows the DP16 raw presence bitmap, rather
 than the last reported temperature: unplugged probes retain cached readings.
 Runtime captures show `00` with no probe, `08` with a probe in slot 4 and
 `20` with a probe in slot 6.
-Bits 0–5 are interpreted as slots 1–6; slots 1–3 and 5 still need physical
+Bits 0–5 are interpreted as slots 1–6; runtime captures also confirm `01` for
+slot 1 and `14` for slots 3 and 5 together. Only slot 2 still needs physical
 confirmation. Before DP16 first arrives after startup,
 a temperature report received by the integration makes that probe available.
 Once DP16 arrives, its bitmap takes precedence over cached temperatures;
@@ -493,9 +494,12 @@ one-minute setting step. BLE reports for DPs 24, 25, 26, 27, 40 and 41 are
 interpreted as seconds: live values such as `46469` → `46468` decrement once
 per second, despite the Tuya schema declaring minutes. For example, `46469`
 represents 12 hours, 54 minutes and 29 seconds (about 774.48 minutes).
-Home Assistant divides reports by 60 and multiplies settings by 60, so a
-five-minute setting sends `300`. Reports retain fractional minutes to reflect
-each second of the countdown. Countdown write units and expiry behavior still
+Home Assistant rounds remaining time up to whole minutes and multiplies
+settings by 60, so a five-minute setting sends `300`. Countdown states are
+published only when the displayed minute or availability changes; zero is
+reported at expiry. Countdown controls are unavailable for absent probes,
+using the same presence check as their temperatures. Raw second reports are
+retained internally. Countdown write units and expiry behavior still
 require physical-device testing; a countdown control has not been found in the
 official app used during runtime testing.
 

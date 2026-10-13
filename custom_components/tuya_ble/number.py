@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import logging
+from math import ceil
 from typing import Callable
 
 from homeassistant.components.number import (
@@ -23,14 +24,19 @@ from homeassistant.const import (
     UnitOfElectricPotential,
     Platform,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN
 
-from .devices import TuyaBLEData, TuyaBLEEntity, TuyaBLEProductInfo
+from .devices import (
+    TuyaBLEData,
+    TuyaBLEEntity,
+    TuyaBLEProductInfo,
+    bth08_probe_connected,
+)
 from .tuya_ble import TuyaBLEDataPointType, TuyaBLEDevice
 
 _LOGGER = logging.getLogger(__name__)
@@ -61,6 +67,25 @@ class TuyaBLENumberMapping:
     getter: TuyaBLENumberGetter = None
     setter: TuyaBLENumberSetter = None
     mode: NumberMode = NumberMode.BOX
+    publish_on_change: bool = False
+
+
+def is_bth08_countdown_available(
+    self: TuyaBLENumber, product: TuyaBLEProductInfo
+) -> bool:
+    """Hide countdowns for absent probes using the same presence as temperatures."""
+    temperature_dp = {24: 2, 25: 3, 26: 4, 27: 5, 40: 28, 41: 29}[self._mapping.dp_id]
+    return bth08_probe_connected(self._device, temperature_dp)
+
+
+def get_bth08_countdown(
+    self: TuyaBLENumber, product: TuyaBLEProductInfo
+) -> float | None:
+    """Publish whole remaining minutes without showing zero before expiry."""
+    datapoint = self._device.datapoints[self._mapping.dp_id]
+    if datapoint is None:
+        return None
+    return ceil(datapoint.value / self._mapping.coefficient)
 
 
 def is_fingerbot_in_program_mode(
@@ -1076,6 +1101,9 @@ mapping: dict[str, TuyaBLECategoryNumberMapping] = {
                             native_unit_of_measurement=UnitOfTime.MINUTES,
                         ),
                         coefficient=60.0,
+                        getter=get_bth08_countdown,
+                        is_available=is_bth08_countdown_available,
+                        publish_on_change=True,
                     )
                     for probe, dp_id in enumerate((24, 25, 26, 27, 40, 41), start=1)
                 ],
@@ -1151,6 +1179,18 @@ class TuyaBLENumber(TuyaBLEEntity, NumberEntity):
         super().__init__(hass, coordinator, device, product, mapping.description)
         self._mapping = mapping
         self._attr_mode = mapping.mode
+        self._last_published_state: tuple[bool, float | None] | None = None
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Suppress unchanged reports for numbers that opt into this behavior."""
+        if self._mapping.publish_on_change:
+            available = self.available
+            state = (available, self.native_value if available else None)
+            if state == self._last_published_state:
+                return
+            self._last_published_state = state
+        super()._handle_coordinator_update()
 
     @property
     def native_value(self) -> float | None:

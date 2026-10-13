@@ -39,12 +39,12 @@ def _make_countdown(
 
 @pytest.mark.parametrize(
     ("raw_seconds", "minutes"),
-    ((0, 0), (60, 1), (300, 5), (46469, 774.4833333333333), (86400, 1440)),
+    ((0, 0), (1, 1), (59, 1), (60, 1), (61, 2), (300, 5), (46469, 775), (86400, 1440)),
 )
 async def test_countdown_reports_minutes(
     hass: HomeAssistant, dp_id: int, raw_seconds: int, minutes: float
 ) -> None:
-    """Convert device reports, including limits and fractional minutes."""
+    """Round reports up to whole minutes, including the final second and limits."""
     entity, device = _make_countdown(hass, dp_id)
     device.datapoints._update_from_device(
         dp_id, 0, 0, TuyaBLEDataPointType.DT_VALUE, raw_seconds
@@ -55,10 +55,10 @@ async def test_countdown_reports_minutes(
     device._send_datapoints.assert_not_called()
 
 
-async def test_countdown_preserves_one_second_updates(
+async def test_countdown_coalesces_one_second_updates(
     hass: HomeAssistant, dp_id: int
 ) -> None:
-    """A one-second BLE decrement must not become a one-minute decrement."""
+    """Second decrements retain raw precision without changing the displayed minute."""
     entity, device = _make_countdown(hass, dp_id)
     device.datapoints._update_from_device(
         dp_id, 0, 0, TuyaBLEDataPointType.DT_VALUE, 46469
@@ -68,8 +68,78 @@ async def test_countdown_preserves_one_second_updates(
         dp_id, 0, 0, TuyaBLEDataPointType.DT_VALUE, 46468
     )
 
-    assert entity.native_value == pytest.approx(774.4666666666667)
-    assert previous_minutes - entity.native_value == pytest.approx(1 / 60)
+    assert entity.native_value == previous_minutes == 775
+    assert device.datapoints[dp_id].value == 46468
+
+
+async def test_countdown_publishes_only_minute_and_availability_changes(
+    hass: HomeAssistant, dp_id: int
+) -> None:
+    """Empty probes and unchanged minutes must not produce repeated HA writes."""
+    entity, device = _make_countdown(hass, dp_id)
+    entity.async_write_ha_state = Mock()
+    coordinator = entity._coordinator
+    unsubscribe = coordinator.async_add_listener(entity._handle_coordinator_update)
+    bit = (24, 25, 26, 27, 40, 41).index(dp_id)
+
+    def report(dp, dp_type, value):
+        device.datapoints._update_from_device(dp, 0, 0, dp_type, value)
+        coordinator._async_handle_update([device.datapoints[dp]])
+
+    try:
+        report(16, TuyaBLEDataPointType.DT_RAW, b"\x00")
+        assert not entity.available
+        entity.async_write_ha_state.reset_mock()
+        for seconds in range(120, 60, -1):
+            report(dp_id, TuyaBLEDataPointType.DT_VALUE, seconds)
+        entity.async_write_ha_state.assert_not_called()
+
+        report(16, TuyaBLEDataPointType.DT_RAW, bytes([1 << bit]))
+        assert entity.available
+        entity.async_write_ha_state.assert_called_once()
+        entity.async_write_ha_state.reset_mock()
+        report(dp_id, TuyaBLEDataPointType.DT_VALUE, 60)
+        assert entity.native_value == 1
+        entity.async_write_ha_state.assert_called_once()
+        entity.async_write_ha_state.reset_mock()
+        for seconds in range(59, 0, -1):
+            report(dp_id, TuyaBLEDataPointType.DT_VALUE, seconds)
+        # Other probes and unrelated DPs also notify all coordinator listeners.
+        report(1, TuyaBLEDataPointType.DT_VALUE, 80)
+        entity.async_write_ha_state.assert_not_called()
+        report(dp_id, TuyaBLEDataPointType.DT_VALUE, 0)
+        assert entity.native_value == 0
+        entity.async_write_ha_state.assert_called_once()
+        entity.async_write_ha_state.reset_mock()
+        report(16, TuyaBLEDataPointType.DT_RAW, b"\x00")
+        assert not entity.available
+        entity.async_write_ha_state.assert_called_once()
+        entity.async_write_ha_state.reset_mock()
+        report(dp_id, TuyaBLEDataPointType.DT_VALUE, 500)
+        entity.async_write_ha_state.assert_not_called()
+    finally:
+        unsubscribe()
+        await coordinator.async_shutdown()
+
+
+async def test_countdown_startup_requires_probe_evidence(hass, dp_id):
+    """A countdown report alone does not prove an attached probe at startup."""
+    entity, device = _make_countdown(hass, dp_id)
+    coordinator = entity._coordinator
+    coordinator._async_handle_connect()
+    try:
+        device.datapoints._update_from_device(
+            dp_id, 0, 0, TuyaBLEDataPointType.DT_VALUE, 300
+        )
+        assert not entity.available
+        bit = (24, 25, 26, 27, 40, 41).index(dp_id)
+        temperature_dp = (2, 3, 4, 5, 28, 29)[bit]
+        device.datapoints._update_from_device(
+            temperature_dp, 0, 0, TuyaBLEDataPointType.DT_VALUE, 210
+        )
+        assert entity.available
+    finally:
+        await coordinator.async_shutdown()
 
 
 @pytest.mark.parametrize("reported", (False, True))
