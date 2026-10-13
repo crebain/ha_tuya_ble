@@ -488,6 +488,9 @@ temperature history are preserved.
 
 Target temperatures use whole-degree steps (1 °C), matching the device and
 official app. Temperature datapoints retain their Tuya scale of 1.
+Targets and countdowns show unknown until their datapoint is received or a
+setting is written. The minimum allowed target (-30 °C) is not a default
+reported by the device. Reports may arrive incrementally after reconnecting.
 
 The six countdown controls display minutes, with a range of 0–1440 and a
 one-minute setting step. DPs 24, 25, 26, 27, 40 and 41 use whole minutes,

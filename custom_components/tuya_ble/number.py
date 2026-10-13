@@ -67,6 +67,7 @@ class TuyaBLENumberMapping:
     setter: TuyaBLENumberSetter = None
     mode: NumberMode = NumberMode.BOX
     publish_on_change: bool = False
+    default_to_minimum: bool = True
 
 
 def is_bth08_countdown_available(
@@ -1072,6 +1073,7 @@ mapping: dict[str, TuyaBLECategoryNumberMapping] = {
                             native_unit_of_measurement=UnitOfTemperature.CELSIUS,
                         ),
                         coefficient=10.0,
+                        default_to_minimum=False,
                     )
                     for probe, dp_id in enumerate((10, 11, 12, 13, 36, 37), start=1)
                 ],
@@ -1091,6 +1093,7 @@ mapping: dict[str, TuyaBLECategoryNumberMapping] = {
                         ),
                         is_available=is_bth08_countdown_available,
                         publish_on_change=True,
+                        default_to_minimum=False,
                     )
                     for probe, dp_id in enumerate((24, 25, 26, 27, 40, 41), start=1)
                 ],
@@ -1189,7 +1192,9 @@ class TuyaBLENumber(TuyaBLEEntity, NumberEntity):
         if datapoint:
             return datapoint.value / self._mapping.coefficient
 
-        return self._mapping.description.native_min_value
+        if self._mapping.default_to_minimum:
+            return self._mapping.description.native_min_value
+        return None
 
     def set_native_value(self, value: float) -> None:
         """Set new value."""
