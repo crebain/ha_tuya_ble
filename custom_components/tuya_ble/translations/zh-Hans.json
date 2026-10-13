@@ -102,6 +102,24 @@
             },
             "machine_cover": {
                 "name": "上盖"
+            },
+            "probe_1_countdown_alarm": {
+                "name": "探针 1 倒计时报警"
+            },
+            "probe_2_countdown_alarm": {
+                "name": "探针 2 倒计时报警"
+            },
+            "probe_3_countdown_alarm": {
+                "name": "探针 3 倒计时报警"
+            },
+            "probe_4_countdown_alarm": {
+                "name": "探针 4 倒计时报警"
+            },
+            "probe_5_countdown_alarm": {
+                "name": "探针 5 倒计时报警"
+            },
+            "probe_6_countdown_alarm": {
+                "name": "探针 6 倒计时报警"
             }
         },
         "button": {

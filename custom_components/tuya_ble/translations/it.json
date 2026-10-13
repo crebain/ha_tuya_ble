@@ -102,6 +102,24 @@
             },
             "machine_cover": {
                 "name": "Coperchio"
+            },
+            "probe_1_countdown_alarm": {
+                "name": "Allarme conto alla rovescia sonda 1"
+            },
+            "probe_2_countdown_alarm": {
+                "name": "Allarme conto alla rovescia sonda 2"
+            },
+            "probe_3_countdown_alarm": {
+                "name": "Allarme conto alla rovescia sonda 3"
+            },
+            "probe_4_countdown_alarm": {
+                "name": "Allarme conto alla rovescia sonda 4"
+            },
+            "probe_5_countdown_alarm": {
+                "name": "Allarme conto alla rovescia sonda 5"
+            },
+            "probe_6_countdown_alarm": {
+                "name": "Allarme conto alla rovescia sonda 6"
             }
         },
         "button": {

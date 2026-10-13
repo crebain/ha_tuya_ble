@@ -102,6 +102,24 @@
             },
             "machine_cover": {
                 "name": "Cover"
+            },
+            "probe_1_countdown_alarm": {
+                "name": "Probe 1 countdown alarm"
+            },
+            "probe_2_countdown_alarm": {
+                "name": "Probe 2 countdown alarm"
+            },
+            "probe_3_countdown_alarm": {
+                "name": "Probe 3 countdown alarm"
+            },
+            "probe_4_countdown_alarm": {
+                "name": "Probe 4 countdown alarm"
+            },
+            "probe_5_countdown_alarm": {
+                "name": "Probe 5 countdown alarm"
+            },
+            "probe_6_countdown_alarm": {
+                "name": "Probe 6 countdown alarm"
             }
         },
         "button": {

@@ -102,6 +102,24 @@
             },
             "machine_cover": {
                 "name": "Cubierta"
+            },
+            "probe_1_countdown_alarm": {
+                "name": "Alarma de cuenta atrás de la sonda 1"
+            },
+            "probe_2_countdown_alarm": {
+                "name": "Alarma de cuenta atrás de la sonda 2"
+            },
+            "probe_3_countdown_alarm": {
+                "name": "Alarma de cuenta atrás de la sonda 3"
+            },
+            "probe_4_countdown_alarm": {
+                "name": "Alarma de cuenta atrás de la sonda 4"
+            },
+            "probe_5_countdown_alarm": {
+                "name": "Alarma de cuenta atrás de la sonda 5"
+            },
+            "probe_6_countdown_alarm": {
+                "name": "Alarma de cuenta atrás de la sonda 6"
             }
         },
         "button": {

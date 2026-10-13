@@ -102,6 +102,24 @@
             },
             "machine_cover": {
                 "name": "Abdeckung"
+            },
+            "probe_1_countdown_alarm": {
+                "name": "Countdown-Alarm Sonde 1"
+            },
+            "probe_2_countdown_alarm": {
+                "name": "Countdown-Alarm Sonde 2"
+            },
+            "probe_3_countdown_alarm": {
+                "name": "Countdown-Alarm Sonde 3"
+            },
+            "probe_4_countdown_alarm": {
+                "name": "Countdown-Alarm Sonde 4"
+            },
+            "probe_5_countdown_alarm": {
+                "name": "Countdown-Alarm Sonde 5"
+            },
+            "probe_6_countdown_alarm": {
+                "name": "Countdown-Alarm Sonde 6"
             }
         },
         "button": {

@@ -481,9 +481,9 @@ Probe temperature availability follows the DP16 raw presence bitmap, rather
 than the last reported temperature: unplugged probes retain cached readings.
 Runtime captures show `00` with no probe, `08` with a probe in slot 4 and
 `20` with a probe in slot 6.
-Bits 0–5 are interpreted as slots 1–6; runtime captures also confirm `01` for
-slot 1 and `14` for slots 3 and 5 together. Only slot 2 still needs physical
-confirmation. Before DP16 first arrives after startup,
+Bits 0–5 correspond to slots 1–6, confirmed by runtime captures including `01`
+for slot 1, `02` for slot 2 and `14` for slots 3 and 5 together.
+Before DP16 first arrives after startup,
 a temperature report received by the integration makes that probe available.
 Once DP16 arrives, its bitmap takes precedence over cached temperatures;
 malformed presence data leaves probes unavailable. Existing entity keys and
@@ -506,9 +506,9 @@ published only when the displayed minute or availability changes; zero is
 reported at expiry. Countdown controls are unavailable for absent probes,
 using the same presence check as their temperatures. Previously observed raw
 values above the schema's 1440-minute maximum remain unexplained and are not
-silently clamped. A one-minute write with the corrected conversion and the
-device's expiry/alarm behavior still require physical-device testing;
-a countdown control has not been found in the
+silently clamped. One-minute writes, expiry reports of zero and physical
+countdown alarms were verified on slots 4 and 6. A countdown control has not
+been found in the
 official app used during runtime testing.
 
 DP44 is exposed as **Alarm switch (unverified)**, retaining the existing
@@ -519,6 +519,16 @@ response. DP44's exact meaning, including any relationship to mute or
 temperature/countdown alarms, remains unverified. It must not be used as an
 immediate beeper trigger. Physical testing is needed to correlate its state
 with the device/app controls and with an actual alarm event.
+
+Six countdown-alarm binary sensors decode DP22's bitmap, with bits 0–5
+corresponding to probes 1–6. Runtime tests verified slot 4 (`08`) and slot 6
+(`20`): a one-minute setting triggered the physical alarm, the countdown
+reported zero, and the corresponding DP22 bit cleared after silencing the
+alarm on the device. Other alarm bits and simultaneous alarms are inferred
+from this layout and still need physical confirmation. Missing DP22 leaves
+alarm states unknown; a disconnected thermometer makes them unavailable.
+These sensors track the reported alarm independently of probe presence.
+DP23 remains unmapped because its meaning is unverified.
 
 ### Fingerbots Programming Note
 All features available in Home Assistant, programming (series of actions) is implemented for Fingerbot Plus.

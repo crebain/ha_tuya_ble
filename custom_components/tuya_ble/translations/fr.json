@@ -102,6 +102,24 @@
             },
             "machine_cover": {
                 "name": "Capot"
+            },
+            "probe_1_countdown_alarm": {
+                "name": "Alarme du compte à rebours de la sonde 1"
+            },
+            "probe_2_countdown_alarm": {
+                "name": "Alarme du compte à rebours de la sonde 2"
+            },
+            "probe_3_countdown_alarm": {
+                "name": "Alarme du compte à rebours de la sonde 3"
+            },
+            "probe_4_countdown_alarm": {
+                "name": "Alarme du compte à rebours de la sonde 4"
+            },
+            "probe_5_countdown_alarm": {
+                "name": "Alarme du compte à rebours de la sonde 5"
+            },
+            "probe_6_countdown_alarm": {
+                "name": "Alarme du compte à rebours de la sonde 6"
             }
         },
         "button": {

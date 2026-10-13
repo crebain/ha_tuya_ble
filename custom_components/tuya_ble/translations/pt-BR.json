@@ -102,6 +102,24 @@
             },
             "machine_cover": {
                 "name": "Tampa"
+            },
+            "probe_1_countdown_alarm": {
+                "name": "Alarme de contagem regressiva da sonda 1"
+            },
+            "probe_2_countdown_alarm": {
+                "name": "Alarme de contagem regressiva da sonda 2"
+            },
+            "probe_3_countdown_alarm": {
+                "name": "Alarme de contagem regressiva da sonda 3"
+            },
+            "probe_4_countdown_alarm": {
+                "name": "Alarme de contagem regressiva da sonda 4"
+            },
+            "probe_5_countdown_alarm": {
+                "name": "Alarme de contagem regressiva da sonda 5"
+            },
+            "probe_6_countdown_alarm": {
+                "name": "Alarme de contagem regressiva da sonda 6"
             }
         },
         "button": {

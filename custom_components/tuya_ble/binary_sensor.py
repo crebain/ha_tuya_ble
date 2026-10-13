@@ -84,6 +84,23 @@ class TuyaBLECategoryBinarySensorMapping:
 
 
 mapping: dict[str, TuyaBLECategoryBinarySensorMapping] = {
+    "swtz": TuyaBLECategoryBinarySensorMapping(
+        products={
+            "o3nnpkat": [
+                TuyaBLEBinarySensorMapping(
+                    dp_id=22,
+                    dp_type=TuyaBLEDataPointType.DT_BITMAP,
+                    bit=probe - 1,
+                    description=BinarySensorEntityDescription(
+                        key=f"probe_{probe}_countdown_alarm",
+                        device_class=BinarySensorDeviceClass.PROBLEM,
+                        icon="mdi:timer-alert",
+                    ),
+                )
+                for probe in range(1, 7)
+            ],
+        },
+    ),
     "dcb": TuyaBLECategoryBinarySensorMapping(
         products={
             **dict.fromkeys(
