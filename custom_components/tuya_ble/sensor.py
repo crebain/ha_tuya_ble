@@ -88,6 +88,18 @@ class TuyaBLETemperatureMapping(TuyaBLESensorMapping):
     )
 
 
+def is_bth08_probe_connected(self: TuyaBLESensor, product: TuyaBLEProductInfo) -> bool:
+    """Read probe presence from DP16; temperature DPs retain unplugged readings."""
+    datapoint = self._device.datapoints[16]
+    if datapoint is None or datapoint.type != TuyaBLEDataPointType.DT_RAW:
+        return False
+    value = datapoint.value
+    if not isinstance(value, (bytes, bytearray)) or len(value) != 1:
+        return False
+    probe_bit = {2: 0, 3: 1, 4: 2, 5: 3, 28: 4, 29: 5}[self._mapping.dp_id]
+    return bool(value[0] & (1 << probe_bit))
+
+
 def is_co2_alarm_enabled(self: TuyaBLESensor, product: TuyaBLEProductInfo) -> bool:
     """For a given sensor, read the datapoints and determine if co2 alarm is enabled"""
     result: bool = True
@@ -2316,6 +2328,7 @@ mapping: dict[str, TuyaBLECategorySensorMapping] = {
                 TuyaBLETemperatureMapping(
                     dp_id=2,
                     coefficient=10.0,
+                    is_available=is_bth08_probe_connected,
                     description=SensorEntityDescription(
                         key="probe_1_temperature",
                         device_class=SensorDeviceClass.TEMPERATURE,
@@ -2326,6 +2339,7 @@ mapping: dict[str, TuyaBLECategorySensorMapping] = {
                 TuyaBLETemperatureMapping(
                     dp_id=3,
                     coefficient=10.0,
+                    is_available=is_bth08_probe_connected,
                     description=SensorEntityDescription(
                         key="probe_2_temperature",
                         device_class=SensorDeviceClass.TEMPERATURE,
@@ -2336,6 +2350,7 @@ mapping: dict[str, TuyaBLECategorySensorMapping] = {
                 TuyaBLETemperatureMapping(
                     dp_id=4,
                     coefficient=10.0,
+                    is_available=is_bth08_probe_connected,
                     description=SensorEntityDescription(
                         key="probe_3_temperature",
                         device_class=SensorDeviceClass.TEMPERATURE,
@@ -2346,6 +2361,7 @@ mapping: dict[str, TuyaBLECategorySensorMapping] = {
                 TuyaBLETemperatureMapping(
                     dp_id=5,
                     coefficient=10.0,
+                    is_available=is_bth08_probe_connected,
                     description=SensorEntityDescription(
                         key="probe_4_temperature",
                         device_class=SensorDeviceClass.TEMPERATURE,
@@ -2369,6 +2385,7 @@ mapping: dict[str, TuyaBLECategorySensorMapping] = {
                 TuyaBLETemperatureMapping(
                     dp_id=28,
                     coefficient=10.0,
+                    is_available=is_bth08_probe_connected,
                     description=SensorEntityDescription(
                         key="probe_5_temperature",
                         device_class=SensorDeviceClass.TEMPERATURE,
@@ -2379,6 +2396,7 @@ mapping: dict[str, TuyaBLECategorySensorMapping] = {
                 TuyaBLETemperatureMapping(
                     dp_id=29,
                     coefficient=10.0,
+                    is_available=is_bth08_probe_connected,
                     description=SensorEntityDescription(
                         key="probe_6_temperature",
                         device_class=SensorDeviceClass.TEMPERATURE,

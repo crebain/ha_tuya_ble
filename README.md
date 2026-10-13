@@ -474,6 +474,13 @@ Saved devices load even when powered off or outside Bluetooth range. Entities
 remain unavailable until a connection is established; a new advertisement
 wakes the initial connection attempt.
 
+Probe temperature availability follows the DP16 raw presence bitmap, rather
+than the last reported temperature: unplugged probes retain cached readings.
+Runtime captures show `00` with no probe and `08` with a probe in slot 4.
+Bits 0–5 are interpreted as slots 1–6; the other slots still need physical
+confirmation. Missing or malformed presence data leaves probe temperatures
+unavailable. Existing entity keys and temperature history are preserved.
+
 Target temperatures use whole-degree steps (1 °C), matching the device and
 official app. Temperature datapoints retain their Tuya scale of 1.
 

@@ -48,6 +48,9 @@ async def test_missing_disconnect_callback_expires_cached_temperature(
     unsubscribe = coordinator.async_add_listener(sensor._handle_coordinator_update)
     try:
         device.datapoints._update_from_device(
+            16, 0, 0, TuyaBLEDataPointType.DT_RAW, b"\x10"
+        )
+        device.datapoints._update_from_device(
             28, 0, 0, TuyaBLEDataPointType.DT_VALUE, 211
         )
         coordinator._async_handle_update([device.datapoints[28]])
