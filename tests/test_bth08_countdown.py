@@ -1,4 +1,4 @@
-"""Test BTH08 countdown conversion between BLE seconds and HA minutes."""
+"""Test BTH08 countdown minute units and state publication."""
 
 from struct import pack
 from unittest.mock import AsyncMock, Mock
@@ -38,27 +38,34 @@ def _make_countdown(
 
 
 @pytest.mark.parametrize(
-    ("raw_seconds", "minutes"),
-    ((0, 0), (1, 1), (59, 1), (60, 1), (61, 2), (300, 5), (46469, 775), (86400, 1440)),
+    ("raw_minutes", "minutes"),
+    (
+        (0, 0),
+        (1, 1),
+        (59, 59),
+        (60, 60),
+        (61, 61),
+        (300, 300),
+        (1440, 1440),
+        (46469, 46469),
+    ),
 )
 async def test_countdown_reports_minutes(
-    hass: HomeAssistant, dp_id: int, raw_seconds: int, minutes: float
+    hass: HomeAssistant, dp_id: int, raw_minutes: int, minutes: float
 ) -> None:
-    """Round reports up to whole minutes, including the final second and limits."""
+    """Preserve raw minute reports, including unexpected values above the schema limit."""
     entity, device = _make_countdown(hass, dp_id)
     device.datapoints._update_from_device(
-        dp_id, 0, 0, TuyaBLEDataPointType.DT_VALUE, raw_seconds
+        dp_id, 0, 0, TuyaBLEDataPointType.DT_VALUE, raw_minutes
     )
 
     assert entity.native_value == pytest.approx(minutes)
-    assert device.datapoints[dp_id].value == raw_seconds
+    assert device.datapoints[dp_id].value == raw_minutes
     device._send_datapoints.assert_not_called()
 
 
-async def test_countdown_coalesces_one_second_updates(
-    hass: HomeAssistant, dp_id: int
-) -> None:
-    """Second decrements retain raw precision without changing the displayed minute."""
+async def test_countdown_decrements_in_minutes(hass: HomeAssistant, dp_id: int) -> None:
+    """A raw decrement of one represents a whole minute, without fractional values."""
     entity, device = _make_countdown(hass, dp_id)
     device.datapoints._update_from_device(
         dp_id, 0, 0, TuyaBLEDataPointType.DT_VALUE, 46469
@@ -68,7 +75,9 @@ async def test_countdown_coalesces_one_second_updates(
         dp_id, 0, 0, TuyaBLEDataPointType.DT_VALUE, 46468
     )
 
-    assert entity.native_value == previous_minutes == 775
+    assert previous_minutes == 46469
+    assert entity.native_value == 46468
+    assert previous_minutes - entity.native_value == 1
     assert device.datapoints[dp_id].value == 46468
 
 
@@ -90,20 +99,20 @@ async def test_countdown_publishes_only_minute_and_availability_changes(
         report(16, TuyaBLEDataPointType.DT_RAW, b"\x00")
         assert not entity.available
         entity.async_write_ha_state.reset_mock()
-        for seconds in range(120, 60, -1):
-            report(dp_id, TuyaBLEDataPointType.DT_VALUE, seconds)
+        for minutes in range(120, 60, -1):
+            report(dp_id, TuyaBLEDataPointType.DT_VALUE, minutes)
         entity.async_write_ha_state.assert_not_called()
 
         report(16, TuyaBLEDataPointType.DT_RAW, bytes([1 << bit]))
         assert entity.available
         entity.async_write_ha_state.assert_called_once()
         entity.async_write_ha_state.reset_mock()
-        report(dp_id, TuyaBLEDataPointType.DT_VALUE, 60)
+        report(dp_id, TuyaBLEDataPointType.DT_VALUE, 1)
         assert entity.native_value == 1
         entity.async_write_ha_state.assert_called_once()
         entity.async_write_ha_state.reset_mock()
-        for seconds in range(59, 0, -1):
-            report(dp_id, TuyaBLEDataPointType.DT_VALUE, seconds)
+        for _ in range(60):
+            report(dp_id, TuyaBLEDataPointType.DT_VALUE, 1)
         # Other probes and unrelated DPs also notify all coordinator listeners.
         report(1, TuyaBLEDataPointType.DT_VALUE, 80)
         entity.async_write_ha_state.assert_not_called()
@@ -144,12 +153,12 @@ async def test_countdown_startup_requires_probe_evidence(hass, dp_id):
 
 @pytest.mark.parametrize("reported", (False, True))
 @pytest.mark.parametrize(
-    ("minutes", "raw_seconds"), ((0, 0), (1, 60), (5, 300), (1440, 86400))
+    ("minutes", "raw_minutes"), ((0, 0), (1, 1), (5, 5), (1440, 1440))
 )
-async def test_countdown_writes_seconds(
-    hass: HomeAssistant, dp_id: int, reported: bool, minutes: float, raw_seconds: int
+async def test_countdown_writes_minutes(
+    hass: HomeAssistant, dp_id: int, reported: bool, minutes: float, raw_minutes: int
 ) -> None:
-    """Encode whole-minute writes as seconds, before and after a DP report."""
+    """Encode whole-minute writes directly, before and after a DP report."""
     entity, device = _make_countdown(hass, dp_id)
     if reported:
         device.datapoints._update_from_device(
@@ -162,6 +171,6 @@ async def test_countdown_writes_seconds(
     device._send_datapoints.assert_awaited_once_with([dp_id])
     datapoint = device.datapoints[dp_id]
     assert datapoint.type == TuyaBLEDataPointType.DT_VALUE
-    assert datapoint.value == raw_seconds
-    assert datapoint._get_value() == pack(">i", raw_seconds)
+    assert datapoint.value == raw_minutes
+    assert datapoint._get_value() == pack(">i", raw_minutes)
     assert entity.native_value == minutes

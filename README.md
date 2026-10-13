@@ -490,17 +490,19 @@ Target temperatures use whole-degree steps (1 °C), matching the device and
 official app. Temperature datapoints retain their Tuya scale of 1.
 
 The six countdown controls display minutes, with a range of 0–1440 and a
-one-minute setting step. BLE reports for DPs 24, 25, 26, 27, 40 and 41 are
-interpreted as seconds: live values such as `46469` → `46468` decrement once
-per second, despite the Tuya schema declaring minutes. For example, `46469`
-represents 12 hours, 54 minutes and 29 seconds (about 774.48 minutes).
-Home Assistant rounds remaining time up to whole minutes and multiplies
-settings by 60, so a five-minute setting sends `300`. Countdown states are
+one-minute setting step. DPs 24, 25, 26, 27, 40 and 41 use whole minutes,
+matching the Tuya schema. Runtime captures about 74 seconds apart show every
+countdown decrementing by one, including DP40 changing from `60` to `59`.
+This supersedes the earlier interpretation of raw values as seconds.
+Reads and writes use minutes directly: a one-minute setting sends `1`,
+and a five-minute setting sends `5`. Countdown states are
 published only when the displayed minute or availability changes; zero is
 reported at expiry. Countdown controls are unavailable for absent probes,
-using the same presence check as their temperatures. Raw second reports are
-retained internally. Countdown write units and expiry behavior still
-require physical-device testing; a countdown control has not been found in the
+using the same presence check as their temperatures. Previously observed raw
+values above the schema's 1440-minute maximum remain unexplained and are not
+silently clamped. A one-minute write with the corrected conversion and the
+device's expiry/alarm behavior still require physical-device testing;
+a countdown control has not been found in the
 official app used during runtime testing.
 
 DP44 is exposed as **Alarm switch (unverified)**, retaining the existing

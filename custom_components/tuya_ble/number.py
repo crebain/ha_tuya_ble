@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import logging
-from math import ceil
 from typing import Callable
 
 from homeassistant.components.number import (
@@ -76,16 +75,6 @@ def is_bth08_countdown_available(
     """Hide countdowns for absent probes using the same presence as temperatures."""
     temperature_dp = {24: 2, 25: 3, 26: 4, 27: 5, 40: 28, 41: 29}[self._mapping.dp_id]
     return bth08_probe_connected(self._device, temperature_dp)
-
-
-def get_bth08_countdown(
-    self: TuyaBLENumber, product: TuyaBLEProductInfo
-) -> float | None:
-    """Publish whole remaining minutes without showing zero before expiry."""
-    datapoint = self._device.datapoints[self._mapping.dp_id]
-    if datapoint is None:
-        return None
-    return ceil(datapoint.value / self._mapping.coefficient)
 
 
 def is_fingerbot_in_program_mode(
@@ -1086,8 +1075,8 @@ mapping: dict[str, TuyaBLECategoryNumberMapping] = {
                     )
                     for probe, dp_id in enumerate((10, 11, 12, 13, 36, 37), start=1)
                 ],
-                # BLE countdown reports decrement in seconds, despite the
-                # Tuya schema declaring minutes. Keep HA values in minutes.
+                # Runtime timing agrees with the Tuya schema: raw values are
+                # whole minutes. Do not scale reads or writes by 60.
                 *[
                     TuyaBLENumberMapping(
                         dp_id=dp_id,
@@ -1100,8 +1089,6 @@ mapping: dict[str, TuyaBLECategoryNumberMapping] = {
                             native_step=1,
                             native_unit_of_measurement=UnitOfTime.MINUTES,
                         ),
-                        coefficient=60.0,
-                        getter=get_bth08_countdown,
                         is_available=is_bth08_countdown_available,
                         publish_on_change=True,
                     )
