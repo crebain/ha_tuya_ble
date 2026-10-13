@@ -476,10 +476,14 @@ wakes the initial connection attempt.
 
 Probe temperature availability follows the DP16 raw presence bitmap, rather
 than the last reported temperature: unplugged probes retain cached readings.
-Runtime captures show `00` with no probe and `08` with a probe in slot 4.
-Bits 0–5 are interpreted as slots 1–6; the other slots still need physical
-confirmation. Missing or malformed presence data leaves probe temperatures
-unavailable. Existing entity keys and temperature history are preserved.
+Runtime captures show `00` with no probe, `08` with a probe in slot 4 and
+`20` with a probe in slot 6.
+Bits 0–5 are interpreted as slots 1–6; slots 1–3 and 5 still need physical
+confirmation. Before DP16 first arrives after startup,
+a temperature report received by the integration makes that probe available.
+Once DP16 arrives, its bitmap takes precedence over cached temperatures;
+malformed presence data leaves probes unavailable. Existing entity keys and
+temperature history are preserved.
 
 Target temperatures use whole-degree steps (1 °C), matching the device and
 official app. Temperature datapoints retain their Tuya scale of 1.

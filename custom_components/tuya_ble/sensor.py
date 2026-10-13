@@ -91,7 +91,15 @@ class TuyaBLETemperatureMapping(TuyaBLESensorMapping):
 def is_bth08_probe_connected(self: TuyaBLESensor, product: TuyaBLEProductInfo) -> bool:
     """Read probe presence from DP16; temperature DPs retain unplugged readings."""
     datapoint = self._device.datapoints[16]
-    if datapoint is None or datapoint.type != TuyaBLEDataPointType.DT_RAW:
+    if datapoint is None:
+        # BTH08 may report temperatures before sending its presence bitmap.
+        # Datapoints are session-local; restored HA states are not evidence.
+        temperature = self._device.datapoints[self._mapping.dp_id]
+        return (
+            temperature is not None
+            and temperature.type == TuyaBLEDataPointType.DT_VALUE
+        )
+    if datapoint.type != TuyaBLEDataPointType.DT_RAW:
         return False
     value = datapoint.value
     if not isinstance(value, (bytes, bytearray)) or len(value) != 1:

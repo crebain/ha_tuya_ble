@@ -10,7 +10,7 @@ from custom_components.tuya_ble.sensor import TuyaBLESensor, mapping
 from custom_components.tuya_ble.tuya_ble import TuyaBLEDataPointType, TuyaBLEDevice
 
 
-@pytest.mark.parametrize("mask", (None, 0, 1, 2, 4, 8, 16, 32, 63))
+@pytest.mark.parametrize("mask", (0, 1, 2, 4, 8, 16, 32, 63))
 async def test_presence_controls_each_probe(hass, mask):
     """Only present probes are available, even with all temperatures cached."""
     device = TuyaBLEDevice(
@@ -80,4 +80,71 @@ async def test_invalid_presence_is_unavailable(hass, dp_type, value):
         device.datapoints._update_from_device(16, 0, 0, dp_type, value)
         assert not sensor.available
     finally:
+        await coordinator.async_shutdown()
+
+
+async def test_temperature_before_presence_then_unplug_and_move(hass):
+    """Replay restart with slot 4, unplugging, then connecting slot 6."""
+    device = TuyaBLEDevice(
+        Mock(), BLEDevice("11:22:33:44:55:66", "BTH08", {}, rssi=-50)
+    )
+    coordinator = TuyaBLECoordinator(hass, device)
+    sensors = {}
+    unsubscribers = []
+    try:
+        for dp_id in (5, 29):
+            probe_mapping = next(
+                item
+                for item in mapping["swtz"].products["o3nnpkat"]
+                if item.dp_id == dp_id
+            )
+            sensor = TuyaBLESensor(
+                hass, coordinator, device, TuyaBLEProductInfo("BTH08"), probe_mapping
+            )
+            sensor.async_write_ha_state = Mock()
+            sensors[dp_id] = sensor
+            unsubscribers.append(
+                coordinator.async_add_listener(sensor._handle_coordinator_update)
+            )
+        coordinator._async_handle_connect()
+        assert not sensors[5].available
+        assert not sensors[29].available
+
+        device.datapoints._update_from_device(
+            5, 0, 0, TuyaBLEDataPointType.DT_VALUE, 208
+        )
+        coordinator._async_handle_update([device.datapoints[5]])
+        assert sensors[5].available
+        assert sensors[5].native_value == 20.8
+        assert not sensors[29].available
+
+        device.datapoints._update_from_device(
+            16, 0, 0, TuyaBLEDataPointType.DT_RAW, b"\x00"
+        )
+        coordinator._async_handle_update([device.datapoints[16]])
+        assert not sensors[5].available
+        assert sensors[5].native_value == 20.8
+
+        # A subsequent temperature alone cannot override explicit absence.
+        device.datapoints._update_from_device(
+            5, 0, 0, TuyaBLEDataPointType.DT_VALUE, 207
+        )
+        coordinator._async_handle_update([device.datapoints[5]])
+        assert not sensors[5].available
+
+        device.datapoints._update_from_device(
+            16, 0, 0, TuyaBLEDataPointType.DT_RAW, b"\x20"
+        )
+        device.datapoints._update_from_device(
+            29, 0, 0, TuyaBLEDataPointType.DT_VALUE, 208
+        )
+        coordinator._async_handle_update([device.datapoints[16], device.datapoints[29]])
+        assert sensors[29].available
+        assert sensors[29].native_value == 20.8
+        assert not sensors[5].available
+        coordinator._disconnected = True
+        assert not sensors[29].available
+    finally:
+        for unsubscribe in unsubscribers:
+            unsubscribe()
         await coordinator.async_shutdown()
