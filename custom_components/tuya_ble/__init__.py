@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
+from bleak.backends.device import BLEDevice
 from bleak_retry_connector import BLEAK_RETRY_EXCEPTIONS as BLEAK_EXCEPTIONS, get_device
 
 from homeassistant.components import bluetooth
@@ -17,7 +18,6 @@ from homeassistant.const import (
     Platform,
 )
 from homeassistant.core import Event, HomeAssistant, callback
-from homeassistant.exceptions import ConfigEntryNotReady
 
 from .tuya_ble import TuyaBLEDevice
 
@@ -72,12 +72,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Tuya BLE from a config entry."""
 
     address: str = entry.data[CONF_ADDRESS]
-    ble_device = bluetooth.async_ble_device_from_address(
-        hass, address.upper(), True
-    ) or await get_device(address)
+    ble_device = bluetooth.async_ble_device_from_address(hass, address.upper(), True)
+    if ble_device is None:
+        try:
+            ble_device = await get_device(address)
+        except BLEAK_EXCEPTIONS + (TimeoutError,) as ex:
+            _LOGGER.debug("%s: Device lookup failed (%s)", address, type(ex).__name__)
+    device_seen = asyncio.Event()
+    if ble_device:
+        device_seen.set()
     if not ble_device:
-        raise ConfigEntryNotReady(
-            f"Could not find Tuya BLE device with address {address}"
+        # Load the saved device's mappings even while it is powered off. This
+        # placeholder is never used for BLE I/O; an advertisement replaces it.
+        ble_device = BLEDevice(
+            address=address,
+            name=entry.title,
+            details={},
+            rssi=-127,
         )
 
     manager = HASSTuyaBLEDeviceManager(hass, entry.options.copy())
@@ -109,6 +120,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         """
         delay = 60
         while True:
+            await device_seen.wait()
             try:
                 # Cap a single attempt: `_ensure_connected()` retries internally and
                 # can occupy the task for a long time, which would delay the next
@@ -138,6 +150,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         device.set_ble_device_and_advertisement_data(
             service_info.device, service_info.advertisement
         )
+        device_seen.set()
 
     entry.async_on_unload(
         bluetooth.async_register_callback(

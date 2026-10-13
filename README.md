@@ -470,6 +470,10 @@ See a device marked Experimental you have? We could use real world testing feedb
 
 ### BTH08 Meat Thermometer
 
+Saved devices load even when powered off or outside Bluetooth range. Entities
+remain unavailable until a connection is established; a new advertisement
+wakes the initial connection attempt.
+
 Target temperatures use whole-degree steps (1 °C), matching the device and
 official app. Temperature datapoints retain their Tuya scale of 1.
 
